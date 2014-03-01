@@ -1,0 +1,18 @@
+* NinjaWebCoder (version 0.0.1)
+It's still under work. *Please don't use it yet!*
+
+A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It help web developer to manipulate code snippet from internet.
+
+Say you find some code snippet from stackoverflow.com, you can press keyboard twice and the code snippet is copied into clipboard.
+
+* Install
+Install from [[http://userscripts.org/about/installing][userscript.org]]. It support Google Chrome and Mozilla Firefox.
+
+* Set up
+not finished
+
+* Usage
+Not finished
+
+* Contact me
+You can report bugs at [[https://github.com/redguardtoo/NinjaWebCoder]].
