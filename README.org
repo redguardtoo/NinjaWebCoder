@@ -16,6 +16,13 @@ Then code embedded in html tag "<pre>" will be highlighted by some visual hint.
 
 Press the keyboard according to the hint. The code is into the clipboard.
 
+* Demo
+As you can see, after press "Ctrl-E", a yellow background hint with text "a" appears at the left top corner of the code snippet.
+
+So I follow the hint and press "a", the code is copied into clipboard.
+
+[[https://raw.github.com/redguardtoo/NinjaWebCoder/master/ninja-web-coder-demo.gif]]
+
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/NinjaWebCoder]].
 
