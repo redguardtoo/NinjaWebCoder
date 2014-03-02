@@ -1,18 +1,20 @@
-* NinjaWebCoder (version 0.0.1)
-It's still under work. *Please don't use it yet!*
-
-A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It help web developer to manipulate code snippet from internet.
-
-Say you find some code snippet from stackoverflow.com, you can press keyboard twice and the code snippet is copied into clipboard.
+* NinjaWebCoder (version 1.0.0)
+A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It help web developer to manipulate code snippet from internet (stackoverflow.com, for example).
 
 * Install
-Install from [[http://userscripts.org/about/installing][userscript.org]]. It support Google Chrome and Mozilla Firefox.
+Install it from [[http://userscripts.org/scripts/show/401188][userscript.org]]. It supports both Google Chrome and Mozilla Firefox.
 
 * Set up
-not finished
+Nothing to set up
 
 * Usage
-Not finished
+Ninja coder only use keyboard to copy code from stackoverflow. ;)
+
+All you need to do is only press Ctrl-E.
+
+Then code embedded in html tag "<pre>" will be highlighted by some visual hint.
+
+Press the keyboard according to the hint. The code is into the clipboard.
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/NinjaWebCoder]].

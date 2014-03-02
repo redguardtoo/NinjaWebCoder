@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        NinjaWebCoder
 // @namespace   NinjaWebCoder
-// @description manipulate code from internet like a ninja
+// @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
 // @version     1.0.0
 // @grant       GM_setClipboard
@@ -26,41 +26,42 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-/*global KeyEvent, XPathResult, GM_setClipboard, clearTimeout, AccessifyHTML5, log, ncoder_onGeneralKeypress, ncoder_onKeyPressFilterHint */
+/*global KeyEvent, XPathResult, GM_setClipboard, clearTimeout, AccessifyHTML5, log, nwcoder_onGeneralKeypress, nwcoder_onKeyPressFilterHint */
 /*jslint browser:true, devel:true, indent:2, plusplus:true, continue:true, white:true, newcap:true */
 
 (function () {
   "use strict";
-  var ncoder_xpathSelector = '//pre',
-      ncoder_selectHintMode = false,
-      ncoder_hintElements = {}, // format, { "hotkey": <span> }
-      ncoder_inputKey = '', // what user typed to select hint
-      ncoder_hintColorForm = 'yellow',
-      ncoder_hintColorCandidates = 'blue',
-      ncoder_hintColorFocused = 'green',
-      ncoder_lastMatchHint; // the matched hint, the one stand last
+  var nwcoder_triggerKey = 'C-e', //"C" means Ctrl, "M" means Alt.
+      nwcoder_xpathSelector = '//pre',
+      nwcoder_selectHintMode = false,
+      nwcoder_hintElements = {}, // format, { "hotkey": <span> }
+      nwcoder_inputKey = '', // what user typed to select hint
+      nwcoder_hintColorForm = 'yellow',
+      nwcoder_hintColorCandidates = 'blue',
+      nwcoder_hintColorFocused = 'green',
+      nwcoder_lastMatchHint; // the matched hint, the one stand last
 
-  function ncoder_hintKeys() {
+  function nwcoder_hintKeys() {
     return 'asdfghijkl';
   }
 
-  function ncoder_doIt(elem) {
+  function nwcoder_doIt(elem) {
     GM_setClipboard(elem.textContent);
     return;
   }
 
-  function ncoder_getAliveLastMatchHint() {
+  function nwcoder_getAliveLastMatchHint() {
     try {
-      if (ncoder_lastMatchHint && ncoder_lastMatchHint.style) {
-        return ncoder_lastMatchHint;
+      if (nwcoder_lastMatchHint && nwcoder_lastMatchHint.style) {
+        return nwcoder_lastMatchHint;
       }
     } catch (x) {
-      ncoder_lastMatchHint = null;
+      nwcoder_lastMatchHint = null;
     }
     return null;
   }
 
-  function ncoder_getStyle(elem) {
+  function nwcoder_getStyle(elem) {
     var style, win = window.content;
     if (win.getComputedStyle) {
       //getComputedStyle is supported in ie9
@@ -71,9 +72,9 @@
     return style;
   }
 
-  function ncoder_removeHints() {
+  function nwcoder_removeHints() {
 
-    var hintContainer = document.getElementById('ncoder_hintContainer');
+    var hintContainer = document.getElementById('nwcoder_hintContainer');
 
     if (document.body && hintContainer) {
       try {
@@ -83,11 +84,11 @@
     }
   }
 
-  function ncoder_getBodyOffsets() {
+  function nwcoder_getBodyOffsets() {
     // http://d.hatena.ne.jp/edvakf/20100830/1283199419
     var body = document.body,
         rect,
-        style = ncoder_getStyle(document.body),
+        style = window.content.getComputedStyle(document.body,null),
         pos,
         x,
         y;
@@ -104,7 +105,7 @@
     return [x, y];
   }
 
-  function ncoder_createHintsSeed() {
+  function nwcoder_createHintsSeed() {
     var hintStyle = {"position": 'absolute',
                      "z-index": '2147483647',
                      "color": '#000',
@@ -130,9 +131,9 @@
     return sp;
   }
 
-  function ncoder_findCodeSnippets() {
+  function nwcoder_findCodeSnippets() {
     var arr = [],
-        xpathResult = document.evaluate(ncoder_xpathSelector, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null),
+        xpathResult = document.evaluate(nwcoder_xpathSelector, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null),
         i,
         len;
     for (i = 0, len = xpathResult.snapshotLength; i < len; i++) {
@@ -142,7 +143,7 @@
   }
 
   // Patches from victor.vde@gmail.com
-  function ncoder_createTextHints(amount) {
+  function nwcoder_createTextHints(amount) {
     /* Explanation of the algorithm:
      * Case study 1:
      * suppose hintKeys is "0123", and need find the next("23")
@@ -164,7 +165,7 @@
      */
     var reverseHints = {},
         numHints = 0,
-        hintKeys = ncoder_hintKeys(),
+        hintKeys = nwcoder_hintKeys(),
         l,
         p,
         n,
@@ -213,10 +214,10 @@
     return hints;
   }
 
-  function ncoder_drawHints(arr) {
+  function nwcoder_drawHints(arr) {
     // draw hints
     var docFragment = document.createDocumentFragment(),
-        hintSpanSeed = ncoder_createHintsSeed(),
+        hintSpanSeed = nwcoder_createHintsSeed(),
         hintContainer = document.createElement('div'),
         hintSpans = [],
         span,
@@ -231,7 +232,7 @@
 
     //prepare hint container
     hintContainer.style.position = 'static';
-    hintContainer.id = 'ncoder_hintContainer';
+    hintContainer.id = 'nwcoder_hintContainer';
     docFragment.appendChild(hintContainer);
 
     for (i = 0, len = arr.length; i < len; i++) {
@@ -252,7 +253,7 @@
       //   continue;
       // }
 
-      style = ncoder_getStyle(elem);
+      style = nwcoder_getStyle(elem);
       if (!style || style.visibility !== "visible" || style.display === "none") {
         continue;
       }
@@ -261,10 +262,11 @@
       //cloneNode is supported by all the browsers
       span = hintSpanSeed.cloneNode(false);
 
-      offset = ncoder_getBodyOffsets();
-      span.style.left = (elemRect.left > 0 ? elemRect.left - offset[0] : -offset[0]) + 'px';
-      span.style.top = (elemRect.top > 0 ? elemRect.top - offset[1] : -offset[1]) + 'px';
-      span.style.backgroundColor = ncoder_hintColorForm;
+      offset = nwcoder_getBodyOffsets();
+
+      span.style.left = (elemRect.left > 0 ? elemRect.left + offset[0] : +offset[0]) + 'px';
+      span.style.top = (elemRect.top > 0 ? elemRect.top + offset[1] : +offset[1]) + 'px';
+      span.style.backgroundColor = nwcoder_hintColorForm;
 
       //link to original element
       span.element = elem;
@@ -276,20 +278,20 @@
 
 
     // add text hints
-    textHints = ncoder_createTextHints(hintCount);
+    textHints = nwcoder_createTextHints(hintCount);
     for (i = 0; i < hintCount; i++) {
       span = hintSpans[i];
       span.appendChild(span.ownerDocument.createTextNode(textHints[i]));
-      ncoder_hintElements[textHints[i]] = span;
+      nwcoder_hintElements[textHints[i]] = span;
     }
 
     // actually insert items into body from cache
     document.body.appendChild(docFragment);
-    ncoder_selectHintMode = true;
+    nwcoder_selectHintMode = true;
     return hintCount;
   }
 
-  function ncoder_keyEventToString(aEvent) {
+  function nwcoder_keyEventToString(aEvent) {
     var keyStr,
         isDisplayableKey = function (aEvent) {
           return aEvent.charCode >= 0x20 && aEvent.charCode <= 0x7e;
@@ -396,72 +398,72 @@
     return keyStr;
   }
 
-  function ncoder_preventEvent(event) {
+  function nwcoder_preventEvent(event) {
     event.preventDefault();
     event.stopPropagation();
   }
 
-  function ncoder_resetHintsColor() {
+  function nwcoder_resetHintsColor() {
     var span,
         k;
-    for (k in ncoder_hintElements) {
-      if (ncoder_hintElements.hasOwnProperty(k)) {
-        span = ncoder_hintElements[k];
-        span.style.backgroundColor = ncoder_hintColorForm;
+    for (k in nwcoder_hintElements) {
+      if (nwcoder_hintElements.hasOwnProperty(k)) {
+        span = nwcoder_hintElements[k];
+        span.style.backgroundColor = nwcoder_hintColorForm;
         span.style.display = "inline";
       }
     }
   }
 
-  function ncoder_updateHeaderMatchHints() {
+  function nwcoder_updateHeaderMatchHints() {
     var hideUnmatchedHint = true,
         foundCount = 0,
         hintStr,
         hintElem;
 
-    for (hintStr in ncoder_hintElements) {
-      if (ncoder_hintElements.hasOwnProperty(hintStr)) {
-        hintElem = ncoder_hintElements[hintStr];
-        if (hintStr.indexOf(ncoder_inputKey) === 0) {
-          if (hintStr !== ncoder_inputKey) {
-            hintElem.style.backgroundColor = ncoder_hintColorCandidates;
+    for (hintStr in nwcoder_hintElements) {
+      if (nwcoder_hintElements.hasOwnProperty(hintStr)) {
+        hintElem = nwcoder_hintElements[hintStr];
+        if (hintStr.indexOf(nwcoder_inputKey) === 0) {
+          if (hintStr !== nwcoder_inputKey) {
+            hintElem.style.backgroundColor = nwcoder_hintColorCandidates;
           }
           foundCount++;
         } else {
           if (hideUnmatchedHint) {
             hintElem.style.display = "none";
           }
-          hintElem.style.backgroundColor = ncoder_hintColorForm;
+          hintElem.style.backgroundColor = nwcoder_hintColorForm;
         }
       }
     }
     return foundCount;
   }
 
-  function ncoder_destruction() {
+  function nwcoder_destruction() {
 
-    ncoder_inputKey = '';
-    ncoder_selectHintMode = false;
-    ncoder_removeHints();
+    nwcoder_inputKey = '';
+    nwcoder_selectHintMode = false;
+    nwcoder_removeHints();
 
     //@see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget.removeEventListener
-    document.removeEventListener('keypress', ncoder_onKeyPressFilterHint, true);
-    document.removeEventListener('keydown', ncoder_preventEvent, true);
-    document.removeEventListener('keyup', ncoder_preventEvent, true);
+    document.removeEventListener('keypress', nwcoder_onKeyPressFilterHint, true);
+    document.removeEventListener('keydown', nwcoder_preventEvent, true);
+    document.removeEventListener('keyup', nwcoder_preventEvent, true);
 
-    document.addEventListener('keypress', ncoder_onGeneralKeypress, true);
+    document.addEventListener('keypress', nwcoder_onGeneralKeypress, true);
 
   }
 
-  function ncoder_onKeyPressFilterHint(event) {
+  function nwcoder_onKeyPressFilterHint(event) {
 
-    var keyStr = ncoder_keyEventToString(event),
+    var keyStr = nwcoder_keyEventToString(event),
         keyMap = {
           '<delete>': 'Delete',
           '<backspace>': 'Backspace',
           'RET': 'Enter'
         },
-        keys = ncoder_hintKeys().split(''),
+        keys = nwcoder_hintKeys().split(''),
         i,
         len,
         role,
@@ -472,101 +474,102 @@
     }
 
     if (!keyMap.hasOwnProperty(keyStr)) {
-      ncoder_destruction();
+      nwcoder_destruction();
       return;
     }
 
     role = keyMap[keyStr];
     if (role === 'Delete') {
-      ncoder_destruction();
+      nwcoder_destruction();
       return;
     }
 
     if (role === 'Backspace') {
       //delete
-      if (!ncoder_inputKey) {
-        ncoder_destruction();
+      if (!nwcoder_inputKey) {
+        nwcoder_destruction();
         return;
       }
 
-      ncoder_inputKey = ncoder_inputKey.slice(0, ncoder_inputKey.length - 1);
+      nwcoder_inputKey = nwcoder_inputKey.slice(0, nwcoder_inputKey.length - 1);
 
       // reset but not exit
-      ncoder_resetHintsColor();
+      nwcoder_resetHintsColor();
 
-      if (ncoder_inputKey.length !== 0) {
+      if (nwcoder_inputKey.length !== 0) {
         //show the matched hints
-        ncoder_updateHeaderMatchHints();
+        nwcoder_updateHeaderMatchHints();
       }
     }
 
     if (role === 'Enter') {
-      if (ncoder_getAliveLastMatchHint()) {
-        ncoder_destruction();
+      if (nwcoder_getAliveLastMatchHint()) {
+        nwcoder_destruction();
         //do the real stuff
-        ncoder_doIt(ncoder_lastMatchHint.element);
+        nwcoder_doIt(nwcoder_lastMatchHint.element);
       } else {
-        ncoder_destruction();
+        nwcoder_destruction();
       }
       return;
     }
 
-    ncoder_inputKey += role;
+    nwcoder_inputKey += role;
 
     event.preventDefault();
     event.stopPropagation();
 
-    // look up <pre> by the ncoder_inputKey
-    if (ncoder_hintElements.hasOwnProperty(ncoder_inputKey)) {
+    // look up <pre> by the nwcoder_inputKey
+    if (nwcoder_hintElements.hasOwnProperty(nwcoder_inputKey)) {
       //lastMatchHint is the item which focus on
       //for one key there is only one match
-      ncoder_lastMatchHint = ncoder_hintElements[ncoder_inputKey];
-      ncoder_lastMatchHint.style.backgroundColor = ncoder_hintColorFocused;
+      nwcoder_lastMatchHint = nwcoder_hintElements[nwcoder_inputKey];
+      nwcoder_lastMatchHint.style.backgroundColor = nwcoder_hintColorFocused;
     } else {
-      ncoder_lastMatchHint = null;
+      nwcoder_lastMatchHint = null;
     }
-    foundCount = ncoder_updateHeaderMatchHints();
-    if (foundCount === 1 && ncoder_getAliveLastMatchHint()) {
-      ncoder_lastMatchHint.style.display = 'none';
-      ncoder_destruction();
-      ncoder_doIt(ncoder_lastMatchHint.element);
+    foundCount = nwcoder_updateHeaderMatchHints();
+    if (foundCount === 1 && nwcoder_getAliveLastMatchHint()) {
+      nwcoder_lastMatchHint.style.display = 'none';
+      nwcoder_destruction();
+      nwcoder_doIt(nwcoder_lastMatchHint.element);
     }
     return;
   }
 
-  function ncoder_start() {
+  function nwcoder_start() {
 
     //find items
-    var hintCount = ncoder_drawHints(ncoder_findCodeSnippets());
+    var hintCount = nwcoder_drawHints(nwcoder_findCodeSnippets());
     if (hintCount > 1) {
-      document.addEventListener('keypress', ncoder_onKeyPressFilterHint, true);
-      document.addEventListener('keydown', ncoder_preventEvent, true);
-      document.addEventListener('keyup', ncoder_preventEvent, true);
+      document.addEventListener('keypress', nwcoder_onKeyPressFilterHint, true);
+      document.addEventListener('keydown', nwcoder_preventEvent, true);
+      document.addEventListener('keyup', nwcoder_preventEvent, true);
     } else if (hintCount === 1) {
-      ncoder_doIt(ncoder_lastMatchHint.element);
+      nwcoder_doIt(nwcoder_lastMatchHint.element);
     } else {
       //recover focus
       // remove hints, recover key press handlers
-      ncoder_destruction();
+      nwcoder_destruction();
     }
   }
 
-  function ncoder_onGeneralKeypress(evt) {
+  function nwcoder_onGeneralKeypress(evt) {
     // if (keycodes.indexOf(evt.keyCode) !== -1 ) {
     //     evt.cancelBubble = true;
     //     evt.stopImmediatePropagation();
     //     // alert("Gotcha!"); //uncomment to check if it's seeing the combo
     // }
-    var keyStr = ncoder_keyEventToString(evt);
+    var keyStr = nwcoder_keyEventToString(evt);
 
-    if (keyStr === "r" && ncoder_selectHintMode === false) {
-      ncoder_start();
-      ncoder_preventEvent(evt);
+
+    if (keyStr === nwcoder_triggerKey && nwcoder_selectHintMode === false) {
+      nwcoder_start();
+      nwcoder_preventEvent(evt);
       return false;
     }
 
     if (keyStr === 'ESC') {
-      ncoder_destruction();
+      nwcoder_destruction();
       return false;
     }
 
@@ -574,7 +577,7 @@
   }
 
   //init
-  document.addEventListener('keypress', ncoder_onGeneralKeypress, true);
+  document.addEventListener('keypress', nwcoder_onGeneralKeypress, true);
 
 }());
 
