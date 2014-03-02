@@ -18,3 +18,8 @@ Press the keyboard according to the hint. The code is into the clipboard.
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/NinjaWebCoder]].
+
+* Credits
+Most hint related code is borrowed from [[https://github.com/mooz][Masafumi Oyamada (aka mooz)]]. His project [[https://github.com/mooz/keysnail][keysnail]] (a Emacs simluation in firefox) inspired me.
+
+Victor van den Elzen designed the algorithm to produce the text hints.
