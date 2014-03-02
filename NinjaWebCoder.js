@@ -46,7 +46,6 @@
 
   function ncoder_doIt(elem) {
     GM_setClipboard(elem.textContent);
-    console.log("Into clipboard elem.textContent:" + elem.textContent);
     return;
   }
 
@@ -73,7 +72,6 @@
   }
 
   function ncoder_removeHints() {
-    console.log('removeHints called');
 
     var hintContainer = document.getElementById('ncoder_hintContainer');
 
@@ -81,7 +79,6 @@
       try {
         document.body.removeChild(hintContainer);
       } catch (x) {
-        console.log(x);
       }
     }
   }
@@ -242,7 +239,6 @@
       elemRect = elem.getClientRects()[0];
       if (!elemRect) {
         // display:none will goto here on firefox 20+
-        console.log("0 i=", i);
         continue;
       }
       //make sure the elem visible
@@ -251,22 +247,16 @@
       //     r.bottom < 0 || r.left > window.content.innerWidth ||
       //     r.right < 0)
       // {
-      //   console.log("r=",r);
-      //   console.log("window.content.innerHeight=",window.content.innerHeight);
-      //   console.log("window.content.innerWidth=",window.content.innerWidth);
 
-      //   console.log("1 i=",i);
 
       //   continue;
       // }
 
       style = ncoder_getStyle(elem);
       if (!style || style.visibility !== "visible" || style.display === "none") {
-        console.log("2 i=", i);
         continue;
       }
 
-      console.log("i=", i);
 
       //cloneNode is supported by all the browsers
       span = hintSpanSeed.cloneNode(false);
@@ -284,7 +274,6 @@
       hintCount++;
     }
 
-    console.log("hintCount=", hintCount);
 
     // add text hints
     textHints = ncoder_createTextHints(hintCount);
@@ -546,7 +535,6 @@
   }
 
   function ncoder_start() {
-    console.log('copyCode called');
 
     //find items
     var hintCount = ncoder_drawHints(ncoder_findCodeSnippets());
