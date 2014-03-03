@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.0.0
+// @version     1.1.0
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -27,7 +27,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 /*global KeyEvent, XPathResult, GM_setClipboard, clearTimeout, AccessifyHTML5, log, nwcoder_onGeneralKeypress, nwcoder_onKeyPressFilterHint */
-/*jslint browser:true, devel:true, indent:2, plusplus:true, continue:true, white:true, newcap:true */
+/*jslint browser:true, devel:true, indent:2, plusplus:true, continue:true, white:true, newcap:true, regexp:true */
 
 (function () {
   "use strict";
@@ -45,10 +45,153 @@
     return 'asdfghijkl';
   }
 
+  function nwcoder_preventEvent(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function nwcoder_removeHints() {
+
+    var hintContainer = document.getElementById('nwcoder_hintContainer');
+
+    if (document.body && hintContainer) {
+      try {
+        document.body.removeChild(hintContainer);
+      } catch (x) {
+        if(console){
+          console.log(x);
+        }
+      }
+    }
+  }
+
+  function nwcoder_destruction() {
+
+    nwcoder_inputKey = '';
+    nwcoder_selectHintMode = false;
+    nwcoder_removeHints();
+
+    //@see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget.removeEventListener
+    // document.removeEventListener('keydown', nwcoder_preventEvent, true);
+    // document.removeEventListener('keyup', nwcoder_preventEvent, true);
+  }
+
   function nwcoder_doIt(elem) {
-    GM_setClipboard(elem.textContent);
+    var getPlainText = function (node) {
+      // used for testing:
+      //return node.innerText || node.textContent;
+
+      var normalize,
+          removeWhiteSpace,
+          sty,
+          blockTypeNodes = "table-row,block,list-item",
+          isBlock,
+          recurse,
+          paras,
+          i,
+          t;
+
+      normalize = function (a) {
+        // clean up double line breaks and spaces
+        if (!a){ return ""; }
+        return a.replace(/ +/g, " ")
+          .replace(/[\t]+/gm, "")
+          .replace(/[ ]+$/gm, "")
+          .replace(/^[ ]+/gm, "")
+          .replace(/\n+/g, "\n")
+          .replace(/\n+$/, "")
+          .replace(/^\n+/, "")
+          .replace(/\nNEWLINE\n/g, "\n\n")
+          .replace(/NEWLINE\n/g, "\n\n");
+      }; // IE
+
+      removeWhiteSpace = function (node) {
+        var isWhite,
+            ws = [],
+            findWhite,
+            n;
+        // getting rid of empty text nodes
+        isWhite = function (node) {
+          return !(/[^\t\n\r ]/.test(node.nodeValue));
+        };
+        findWhite = function (node) {
+          for (i = 0; i < node.childNodes.length; i++) {
+            n = node.childNodes[i];
+            if (n.nodeType === 3 && isWhite(n)) {
+              ws.push(n);
+            }
+            else if (n.hasChildNodes()) {
+              findWhite(n);
+            }
+          }
+        };
+        findWhite(node);
+        for (i = 0; i < ws.length; i++) {
+          ws[i].parentNode.removeChild(ws[i]);
+        }
+
+      };
+      sty = function (n, prop) {
+        var s;
+        // Get the style of the node.
+        // Assumptions are made here based on tagName.
+        if (n.style[prop]){ return n.style[prop]; }
+        s = n.currentStyle || n.ownerDocument.defaultView.getComputedStyle(n, null);
+        if (n.tagName === "SCRIPT") { return "none"; }
+        if (!s[prop]) { return "LI,P,TR".indexOf(n.tagName) > -1 ? "block" : n.style[prop]; }
+        if (s[prop] === "block" && n.tagName === "TD") { return "feaux-inline"; }
+        return s[prop];
+      };
+
+
+      isBlock = function (n) {
+        // display:block or something else
+        var s = sty(n, "display") || "feaux-inline";
+        if (blockTypeNodes.indexOf(s) > -1) { return true; }
+        return false;
+      };
+      recurse = function (n) {
+        // Loop through all the child nodes
+        // and collect the text, noting whether
+        // spaces or line breaks are needed.
+        var s = sty(n, "display"), gap, c;
+        if (s === "none") { return ""; }
+        gap = isBlock(n) ? "\n" : " ";
+        t += gap;
+        for (i = 0; i < n.childNodes.length; i++) {
+          c = n.childNodes[i];
+          if (c.nodeType === 3) { t += c.nodeValue; }
+          if (c.childNodes.length) { recurse(c); }
+        }
+        t += gap;
+        return t;
+      };
+
+      // Use a copy because stuff gets changed
+      node = node.cloneNode(true);
+      // Line breaks aren't picked up by textContent
+      node.innerHTML = node.innerHTML.replace(/<br>/g, "\n");
+
+      // Double line breaks after P tags are desired, but would get
+      // stripped by the final RegExp. Using placeholder text.
+      paras = node.getElementsByTagName("p");
+      for (i = 0; i < paras.length; i++) {
+        paras[i].innerHTML += "NEWLINE";
+      }
+
+      t = "";
+      removeWhiteSpace(node);
+      // Make the call!
+      return normalize(recurse(node));
+    };
+
+    // getPlainText is too slow
+    GM_setClipboard(elem.textContent || getPlainText(elem));
+    // console.log("elem.textContent=", elem.textContent || getPlainText(elem));
+    nwcoder_destruction();
     return;
   }
+
 
   function nwcoder_getAliveLastMatchHint() {
     try {
@@ -72,24 +215,10 @@
     return style;
   }
 
-  function nwcoder_removeHints() {
-
-    var hintContainer = document.getElementById('nwcoder_hintContainer');
-
-    if (document.body && hintContainer) {
-      try {
-        document.body.removeChild(hintContainer);
-      } catch (x) {
-      }
-    }
-  }
-
   function nwcoder_getBodyOffsets() {
     // http://d.hatena.ne.jp/edvakf/20100830/1283199419
-    var body = document.body,
-        rect,
+    var rect,
         style = window.content.getComputedStyle(document.body,null),
-        pos,
         x,
         y;
 
@@ -287,7 +416,6 @@
 
     // actually insert items into body from cache
     document.body.appendChild(docFragment);
-    nwcoder_selectHintMode = true;
     return hintCount;
   }
 
@@ -310,7 +438,7 @@
         keyStr = "SPC";
       }
     } else if (aEvent.keyCode >= KeyEvent.DOM_VK_F1 &&
-             aEvent.keyCode <= KeyEvent.DOM_VK_F24) {
+               aEvent.keyCode <= KeyEvent.DOM_VK_F24) {
       // function keys
       keyStr = "<f" + (aEvent.keyCode - KeyEvent.DOM_VK_F1 + 1) + ">";
     } else {
@@ -398,11 +526,6 @@
     return keyStr;
   }
 
-  function nwcoder_preventEvent(event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
   function nwcoder_resetHintsColor() {
     var span,
         k;
@@ -440,29 +563,12 @@
     return foundCount;
   }
 
-  function nwcoder_destruction() {
+  function nwcoder_onKeyPressFilterHint(event,keyStr) {
 
-    nwcoder_inputKey = '';
-    nwcoder_selectHintMode = false;
-    nwcoder_removeHints();
-
-    //@see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget.removeEventListener
-    document.removeEventListener('keypress', nwcoder_onKeyPressFilterHint, true);
-    document.removeEventListener('keydown', nwcoder_preventEvent, true);
-    document.removeEventListener('keyup', nwcoder_preventEvent, true);
-
-    document.addEventListener('keypress', nwcoder_onGeneralKeypress, true);
-
-  }
-
-  function nwcoder_onKeyPressFilterHint(event) {
-
-    var keyStr = nwcoder_keyEventToString(event),
-        keyMap = {
-          '<delete>': 'Delete',
-          '<backspace>': 'Backspace',
-          'RET': 'Enter'
-        },
+    var keyMap = {'<delete>': 'Delete',
+                  '<backspace>': 'Backspace',
+                  'RET': 'Enter'
+                 },
         keys = nwcoder_hintKeys().split(''),
         i,
         len,
@@ -504,7 +610,6 @@
 
     if (role === 'Enter') {
       if (nwcoder_getAliveLastMatchHint()) {
-        nwcoder_destruction();
         //do the real stuff
         nwcoder_doIt(nwcoder_lastMatchHint.element);
       } else {
@@ -515,8 +620,7 @@
 
     nwcoder_inputKey += role;
 
-    event.preventDefault();
-    event.stopPropagation();
+    nwcoder_preventEvent(event);
 
     // look up <pre> by the nwcoder_inputKey
     if (nwcoder_hintElements.hasOwnProperty(nwcoder_inputKey)) {
@@ -530,7 +634,6 @@
     foundCount = nwcoder_updateHeaderMatchHints();
     if (foundCount === 1 && nwcoder_getAliveLastMatchHint()) {
       nwcoder_lastMatchHint.style.display = 'none';
-      nwcoder_destruction();
       nwcoder_doIt(nwcoder_lastMatchHint.element);
     }
     return;
@@ -538,29 +641,34 @@
 
   function nwcoder_start() {
 
+    nwcoder_selectHintMode = true;
+
     //find items
     var hintCount = nwcoder_drawHints(nwcoder_findCodeSnippets());
-    if (hintCount > 1) {
-      document.addEventListener('keypress', nwcoder_onKeyPressFilterHint, true);
-      document.addEventListener('keydown', nwcoder_preventEvent, true);
-      document.addEventListener('keyup', nwcoder_preventEvent, true);
-    } else if (hintCount === 1) {
+
+    // if (hintCount > 1) {
+    //   //don't know why, but below code will hang firefox v26.0
+    //   document.addEventListener('keydown', nwcoder_preventEvent, true);
+    //   document.addEventListener('keyup', nwcoder_preventEvent, true);
+    //   return;
+    // }
+
+    if (hintCount === 1) {
       nwcoder_doIt(nwcoder_lastMatchHint.element);
-    } else {
+      return;
+    }
+
+    if (hintCount <= 0) {
       //recover focus
       // remove hints, recover key press handlers
       nwcoder_destruction();
+      return;
     }
+    return;
   }
 
   function nwcoder_onGeneralKeypress(evt) {
-    // if (keycodes.indexOf(evt.keyCode) !== -1 ) {
-    //     evt.cancelBubble = true;
-    //     evt.stopImmediatePropagation();
-    //     // alert("Gotcha!"); //uncomment to check if it's seeing the combo
-    // }
     var keyStr = nwcoder_keyEventToString(evt);
-
 
     if (keyStr === nwcoder_triggerKey && nwcoder_selectHintMode === false) {
       nwcoder_start();
@@ -571,6 +679,10 @@
     if (keyStr === 'ESC') {
       nwcoder_destruction();
       return false;
+    }
+
+    if (nwcoder_selectHintMode === true) {
+      nwcoder_onKeyPressFilterHint(evt,keyStr);
     }
 
     return true;
