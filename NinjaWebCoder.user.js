@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.1.0
+// @version     1.1.1
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -42,7 +42,10 @@
       nwcoder_lastMatchHint; // the matched hint, the one stand last
 
   function nwcoder_hintKeys() {
-    return 'asdfghijkl';
+    // in keysnail:
+    // 'g' is goto top line
+    // 'i' is the insert mode
+    return 'asdfhjkl';
   }
 
   function nwcoder_preventEvent(event) {
@@ -71,7 +74,7 @@
     nwcoder_selectHintMode = false;
     nwcoder_removeHints();
 
-    //@see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget.removeEventListener
+    // //@see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget.removeEventListener
     // document.removeEventListener('keydown', nwcoder_preventEvent, true);
     // document.removeEventListener('keyup', nwcoder_preventEvent, true);
   }
