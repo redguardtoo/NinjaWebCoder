@@ -81,132 +81,42 @@
     // document.removeEventListener('keyup', nwcoder_preventEvent, true);
   }
 
+  function nwcoder_findCodeSnippets(xpathSelector) {
+    var arr = [],
+        xpathResult = document.evaluate(xpathSelector, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null),
+        i,
+        len;
+    for (i = 0, len = xpathResult.snapshotLength; i < len; i++) {
+      arr.push(xpathResult.snapshotItem(i));
+    }
+    return arr;
+  }
+
   function nwcoder_doIt(elem) {
-    var getPlainText = function (node) {
-      // used for testing:
-      //return node.innerText || node.textContent;
-
-      var normalize,
-          removeWhiteSpace,
-          sty,
-          blockTypeNodes = "table-row,block,list-item",
-          isBlock,
-          recurse,
-          paras,
-          i,
-          t;
-
-      normalize = function (a) {
-        // clean up double line breaks and spaces
-        if (!a){ return ""; }
-        return a.replace(/ +/g, " ")
-          .replace(/[\t]+/gm, "")
-          .replace(/[ ]+$/gm, "")
-          .replace(/^[ ]+/gm, "")
-          .replace(/\n+/g, "\n")
-          .replace(/\n+$/, "")
-          .replace(/^\n+/, "")
-          .replace(/\nNEWLINE\n/g, "\n\n")
-          .replace(/NEWLINE\n/g, "\n\n");
-      }; // IE
-
-      removeWhiteSpace = function (node) {
-        var isWhite,
-            ws = [],
-            findWhite,
-            n;
-        // getting rid of empty text nodes
-        isWhite = function (node) {
-          return !(/[^\t\n\r ]/.test(node.nodeValue));
-        };
-        findWhite = function (node) {
-          for (i = 0; i < node.childNodes.length; i++) {
-            n = node.childNodes[i];
-            if (n.nodeType === 3 && isWhite(n)) {
-              ws.push(n);
-            }
-            else if (n.hasChildNodes()) {
-              findWhite(n);
-            }
-          }
-        };
-        findWhite(node);
-        for (i = 0; i < ws.length; i++) {
-          ws[i].parentNode.removeChild(ws[i]);
-        }
-
-      };
-      sty = function (n, prop) {
-        var s;
-        // Get the style of the node.
-        // Assumptions are made here based on tagName.
-        if (n.style[prop]){ return n.style[prop]; }
-        s = n.currentStyle || n.ownerDocument.defaultView.getComputedStyle(n, null);
-        if (n.tagName === "SCRIPT") { return "none"; }
-        if (!s[prop]) { return "LI,P,TR".indexOf(n.tagName) > -1 ? "block" : n.style[prop]; }
-        if (s[prop] === "block" && n.tagName === "TD") { return "feaux-inline"; }
-        return s[prop];
-      };
-
-
-      isBlock = function (n) {
-        // display:block or something else
-        var s = sty(n, "display") || "feaux-inline";
-        if (blockTypeNodes.indexOf(s) > -1) { return true; }
-        return false;
-      };
-      recurse = function (n) {
-        // Loop through all the child nodes
-        // and collect the text, noting whether
-        // spaces or line breaks are needed.
-        var s = sty(n, "display"), gap, c;
-        if (s === "none") { return ""; }
-        gap = isBlock(n) ? "\n" : " ";
-        t += gap;
-        for (i = 0; i < n.childNodes.length; i++) {
-          c = n.childNodes[i];
-          if (c.nodeType === 3) { t += c.nodeValue; }
-          if (c.childNodes.length) { recurse(c); }
-        }
-        t += gap;
-        return t;
-      };
-
-      // Use a copy because stuff gets changed
-      node = node.cloneNode(true);
-      // Line breaks aren't picked up by textContent
-      node.innerHTML = node.innerHTML.replace(/<br>/g, "\n");
-
-      // Double line breaks after P tags are desired, but would get
-      // stripped by the final RegExp. Using placeholder text.
-      paras = node.getElementsByTagName("p");
-      for (i = 0; i < paras.length; i++) {
-        paras[i].innerHTML += "NEWLINE";
-      }
-
-      t = "";
-      removeWhiteSpace(node);
-      // Make the call!
-      return normalize(recurse(node));
-    };
-
     var clipText;
     if(elem.className.indexOf('syntaxhighlighter')!==-1){
-      // syntaxhighlighter screw up the code format, so we need hard way
-      clipText=elem.textContent;
+      // syntaxhighlighter screw up the code format, so we need hack it
+      clipText=(function(parentNode){
+        var txt='',
+            lines=parentNode.getElementsByClassName('line');
+        for (var i=0, len=lines.length; i<len; i++) {
+          txt+=lines[i].textContent+'\n';
+        }
+        return txt;
+      }(elem));
+;
     } else {
-      clipText=elem.textContent || getPlainText(elem);
+      clipText=elem.textContent;
     }
 
     // getPlainText is too slow
     if(document.URL.indexOf('localhost')!==-1||document.URL.indexOf('127.0.0.1')!==-1){
-      // OK, it's local text case
+      // OK, it's local test case
       console.log("clipText=",clipText);
     } else {
       // it's GreaseMonkey user script
       GM_setClipboard(clipText);
     }
-    // console.log("elem.textContent=", elem.textContent || getPlainText(elem));
     nwcoder_destruction();
     return;
   }
@@ -277,17 +187,6 @@
     }
     st.backgroundcolor = 'red';
     return sp;
-  }
-
-  function nwcoder_findCodeSnippets() {
-    var arr = [],
-        xpathResult = document.evaluate(nwcoder_xpathSelector, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null),
-        i,
-        len;
-    for (i = 0, len = xpathResult.snapshotLength; i < len; i++) {
-      arr.push(xpathResult.snapshotItem(i));
-    }
-    return arr;
   }
 
   // Patches from victor.vde@gmail.com
@@ -662,8 +561,8 @@
 
     nwcoder_selectHintMode = true;
 
-    //find items
-    var hintCount = nwcoder_drawHints(nwcoder_findCodeSnippets());
+    //find items from the root document
+    var hintCount = nwcoder_drawHints(nwcoder_findCodeSnippets(nwcoder_xpathSelector));
 
     // if (hintCount > 1) {
     //   //don't know why, but below code will hang firefox v26.0
