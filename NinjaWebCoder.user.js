@@ -45,7 +45,8 @@
     // in keysnail:
     // 'g' is goto top line
     // 'i' is the insert mode
-    return 'asdfhjkl';
+    // 'h', 'j', 'k', 'l' for vim keybinding
+    return 'asdzxcv';
   }
 
   function nwcoder_preventEvent(event) {
