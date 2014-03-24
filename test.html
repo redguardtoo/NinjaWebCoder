@@ -10,20 +10,7 @@
   <body>
     <div itemprop="description" class="post-text">
 
-      <p>When planning out my programs, I often start with a chain of thought like so:</p>
-
-      <blockquote>
-        <p>A football team is just a list of football players. Therefore, I should represent it with:</p>
-
-        <pre class="lang-cs prettyprint prettyprinted" style=""><code><span class="kwd">var</span><span class="pln"> football_team </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">List</span><span class="pun">&lt;</span><span class="typ">FootballPlayer</span><span class="pun">&gt;();</span></code></pre>
-
-        <p>The ordering of this list represent the order in which the players are listed in the roster.</p>
-      </blockquote>
-
-      <p>But I realize later that teams also have other properties, besides the mere list of players, that must be recorded. For example, the running total of scores this season, the current budget, the uniform colors, a <code>string</code> representing the name of the team, etc..</p>
-
-      <p>So then I think:</p>
-
+      <h1>Code snippet 1</h1>
       <blockquote>
         <p>Okay, a football team is just like a list of players, but additionally, it has a name (a <code>string</code>) and a running total of scores (an <code>int</code>). .NET does not provide a class for storing football teams, so I will make my own class. The most similar and relevant existing structure is <code>List&lt;FootballPlayer&gt;</code>, so I will inherit from it:</p>
 
@@ -33,48 +20,6 @@
         </span><span class="kwd">public</span><span class="pln"> </span><span class="typ">int</span><span class="pln"> </span><span class="typ">RunningTotal</span><span class="pln">
         </span><span class="pun">}</span></code></pre>
       </blockquote>
-
-      <p>But it turns out that <a href="http://stackoverflow.com/a/5376343/1042555">a guideline says you shouldn't inherit from <code>List&lt;T&gt;</code></a>. I'm thoroughly confused by this guideline in two respects.</p>
-
-      <h2>Why not?</h2>
-
-      <p>Apparently <a href="http://stackoverflow.com/a/5376358/1042555"><code>List</code> is somehow optimized for performance</a>. How so? What performance problems will I cause if I extend <code>List</code>? What exactly will break?</p>
-
-      <p>Another reason I've seen is that <code>List</code> is provided by Microsoft, and I have no control over it, so <a href="http://stackoverflow.com/questions/5376203/inherit-listt#comment6077237_5376343">I cannot change it later, after exposing a "public API"</a>. But I struggle to understand this. What is a public API and why should I care? If my current project does not and is not likely to ever have this public API, can I safely ignore this guideline? If I do inherit from <code>List</code> <em>and</em> it turns out I need a public API, what difficulties will I have?</p>
-
-      <p>Why does it even matter? A list is a list. What could possibly change? What could I possibly want to change?</p>
-
-      <p>And lastly, if Microsoft did not want me to inherit from <code>List</code>, why didn't they make the class <code>sealed</code>?</p>
-
-      <h2>What else am I supposed to use?</h2>
-
-      <p>Apparently, for custom collections, Microsoft has provided a <code>Collection</code> class which should be extended instead of <code>List</code>. But this class is very bare, and does not have many useful things, <a href="http://stackoverflow.com/questions/1474863/addrange-to-a-collection">such as <code>AddRange</code></a>, for instance. <a href="http://stackoverflow.com/a/12039943/1042555">jvitor83's answer</a> provides a performance rationale for that particular method, but how is a slow <code>AddRange</code> not better than no <code>AddRange</code>?</p>
-
-      <p>Inheriting from <code>Collection</code> is way more work than inheriting from <code>List</code>, and I see no benefit. Surely Microsoft wouldn't tell me to do extra work for no reason, so I can't help feeling like I am somehow misunderstanding something, and inheriting <code>Collection</code> is actually not the right solution for my problem.</p>
-
-      <p>I've seen suggestions such as implementing <code>IList</code>. Just no. This is dozens of lines of boilerplate code which gains me nothing.</p>
-
-      <p>Lastly, some suggest wrapping the <code>List</code> in something: </p>
-
-      <pre class="lang-cs prettyprint prettyprinted" style=""><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">FootballTeam</span><span class="pln">
-      </span><span class="pun">{</span><span class="pln">
-      </span><span class="kwd">public</span><span class="pln"> </span><span class="typ">List</span><span class="pun">&lt;</span><span class="typ">FootballPlayer</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">Players</span><span class="pun">;</span><span class="pln">
-      </span><span class="pun">}</span></code></pre>
-
-      <p>There are two problems with this:</p>
-
-      <ol>
-        <li><p>It makes my code needlessly verbose. I must now call <code>my_team.Players.Count</code> instead of just <code>my_team.Count</code>. Thankfully, with C# I can define indexers to make indexing transparent, and forward all the methods of the internal <code>List</code>... But that's a lot of code! What do I get for all that work?</p></li>
-        <li><p>It just plain doesn't make any sense. A football team doesn't "have" a list of players. It <em>is</em> the list of players. You don't say "John McFootballer has joined SomeTeam's players". You say "John has joined SomeTeam". You don't add a letter to "a string's characters", you add a letter to a string. You don't add a book to a library's books, you add a book to a library.</p></li>
-      </ol>
-
-      <p>I realize that what happens "under the hood" can be said to be "adding X to Y's internal list", but this seems like a very counter-intuitive way of thinking about the world.</p>
-
-      <h2>My question (summarized)</h2>
-
-      <p>What is the correct C# way of representing a data structure, which, "logically" (that is to say, "to the human mind") is just a <code>list</code> of <code>things</code> with a few bells and whistles?</p>
-
-      <p>Is inheriting from <code>List&lt;T&gt;</code> always unacceptable? When is it acceptable? Why/why not? What must a programmer consider, when deciding whether to inherit from <code>List&lt;T&gt;</code> or not?</p>
 
     </div>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.1.2/zepto.min.js"></script>
