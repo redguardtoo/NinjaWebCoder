@@ -197,8 +197,15 @@
     } else {
       clipText=elem.textContent || getPlainText(elem);
     }
+
     // getPlainText is too slow
-    GM_setClipboard(clipText);
+    if(document.URL.indexOf('localhost')!==-1||document.URL.indexOf('127.0.0.1')!==-1){
+      // OK, it's local text case
+      console.log("clipText=",clipText);
+    } else {
+      // it's GreaseMonkey user script
+      GM_setClipboard(clipText);
+    }
     // console.log("elem.textContent=", elem.textContent || getPlainText(elem));
     nwcoder_destruction();
     return;
@@ -665,7 +672,8 @@
     //   return;
     // }
 
-    if (hintCount === 1) {
+    // nwcoder_lastMatchHint could be null if there is only one code snippet
+    if (hintCount === 1 && nwcoder_lastMatchHint) {
       nwcoder_doIt(nwcoder_lastMatchHint.element);
       return;
     }
