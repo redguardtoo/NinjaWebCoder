@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.1.1
+// @version     1.2.0
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -32,7 +32,8 @@
 (function () {
   "use strict";
   var nwcoder_triggerKey = 'C-e', //"C" means Ctrl, "M" means Alt.
-      nwcoder_xpathSelector = '//pre',
+      // any text in <pre> or text rendered by <div> with class name "syntaxhighlighter"
+      nwcoder_xpathSelector = "//pre|//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]",
       nwcoder_selectHintMode = false,
       nwcoder_hintElements = {}, // format, { "hotkey": <span> }
       nwcoder_inputKey = '', // what user typed to select hint
@@ -189,8 +190,15 @@
       return normalize(recurse(node));
     };
 
+    var clipText;
+    if(elem.className.indexOf('syntaxhighlighter')!==-1){
+      // syntaxhighlighter screw up the code format, so we need hard way
+      clipText=elem.textContent;
+    } else {
+      clipText=elem.textContent || getPlainText(elem);
+    }
     // getPlainText is too slow
-    GM_setClipboard(elem.textContent || getPlainText(elem));
+    GM_setClipboard(clipText);
     // console.log("elem.textContent=", elem.textContent || getPlainText(elem));
     nwcoder_destruction();
     return;
