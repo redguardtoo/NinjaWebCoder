@@ -1,0 +1,6 @@
+2014-03-24  Chen Bin  <chenbin.sh@gmail.com>
+	* v1.2.0
+
+	* support wordpress plugin syntaxhighlighter
+
+	* respect vim key-binding from other addons/apps
