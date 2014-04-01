@@ -1,4 +1,4 @@
-* NinjaWebCoder (version 1.2.0)
+* NinjaWebCoder (version 1.2.1)
 A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It help web developer to manipulate code snippet from internet (stackoverflow.com, for example).
 
 * Install
@@ -8,7 +8,7 @@ Install it from [[http://userscripts.org/scripts/show/401188][userscript.org]]. 
 Nothing to set up
 
 * Usage
-Ninja coder only use keyboard to copy code from stackoverflow. ;)
+Ninja coder only use keyboard to copy code from stackoverflow (or other web sites). ;)
 
 All you need to do is only press Ctrl-E.
 

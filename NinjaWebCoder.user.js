@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.2.0
+// @version     1.2.1
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -92,24 +92,27 @@
     return arr;
   }
 
+  function nwcoder_getClipText(lines) {
+    var txt='';
+    for (var i=0, len=lines.length; i<len; i++) {
+      txt+=lines[i].textContent+'\n';
+    }
+    return txt;
+  }
+
   function nwcoder_doIt(elem) {
     var clipText;
     if(elem.className.indexOf('syntaxhighlighter')!==-1){
       // syntaxhighlighter screw up the code format, so we need hack it
-      clipText=(function(parentNode){
-        var txt='',
-            lines=parentNode.getElementsByClassName('line');
-        for (var i=0, len=lines.length; i<len; i++) {
-          txt+=lines[i].textContent+'\n';
-        }
-        return txt;
-      }(elem));
-;
+      clipText=nwcoder_getClipText(elem.getElementsByClassName('line'));
+    } else if (elem.className.indexOf('ng-scope')!==-1) {
+      // angular code snippet
+      clipText=nwcoder_getClipText(elem.getElementsByTagName('li'));
     } else {
       clipText=elem.textContent;
     }
 
-    // getPlainText is too slow
+    // more general or smarter algorithm is too slow
     if(document.URL.indexOf('localhost')!==-1||document.URL.indexOf('127.0.0.1')!==-1){
       // OK, it's local test case
       console.log("clipText=",clipText);
