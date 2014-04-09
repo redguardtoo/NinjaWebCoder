@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.2.1
+// @version     1.2.2
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -101,10 +101,11 @@
   }
 
   function nwcoder_doIt(elem) {
-    var clipText;
-    if(elem.className.indexOf('syntaxhighlighter')!==-1){
-      // syntaxhighlighter screw up the code format, so we need hack it
-      clipText=nwcoder_getClipText(elem.getElementsByClassName('line'));
+    var clipText,
+        lines=elem.getElementsByClassName('line');
+    if(lines.length>0){
+      // syntaxhighlighter or gist.github.com screw up the code format, so we need hack it
+      clipText=nwcoder_getClipText(lines);
     } else if (elem.className.indexOf('ng-scope')!==-1) {
       // angular code snippet
       clipText=nwcoder_getClipText(elem.getElementsByTagName('li'));
