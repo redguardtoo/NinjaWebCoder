@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.2.2
+// @version     1.2.3
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -33,7 +33,7 @@
   "use strict";
   var nwcoder_triggerKey = 'C-e', //"C" means Ctrl, "M" means Alt.
       // any text in <pre> or text rendered by <div> with class name "syntaxhighlighter"
-      nwcoder_xpathSelector = "//pre|//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]",
+      nwcoder_xpathSelector = "//pre|//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]|//dl[contains(concat(' ', @class, ' '), ' codebox ')]|//div[contains(concat(' ', @class, ' '), ' fragment ')]",
       nwcoder_selectHintMode = false,
       nwcoder_hintElements = {}, // format, { "hotkey": <span> }
       nwcoder_inputKey = '', // what user typed to select hint
@@ -109,6 +109,12 @@
     } else if (elem.className.indexOf('ng-scope')!==-1) {
       // angular code snippet
       clipText=nwcoder_getClipText(elem.getElementsByTagName('li'));
+    } else if (elem.className.indexOf('codebox')!==-1) {
+       // Use a copy because stuff gets changed
+      var node = elem.getElementsByTagName('code')[0].cloneNode(true);
+      // Line breaks aren't picked up by textContent
+      node.innerHTML = node.innerHTML.replace(/<br>/g, '\n');
+      clipText=node.textContent;
     } else {
       clipText=elem.textContent;
     }
