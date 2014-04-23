@@ -1,4 +1,4 @@
-* NinjaWebCoder (version 1.2.3)
+* NinjaWebCoder (version 1.2.4)
 A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It help web developer to manipulate code snippet from internet (stackoverflow.com, for example).
 
 * Install

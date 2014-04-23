@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.2.3
+// @version     1.2.4
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -118,6 +118,9 @@
     } else {
       clipText=elem.textContent;
     }
+
+    // replace non-break space character whose character code is 160
+    clipText=clipText.replace(new RegExp(String.fromCharCode(160),"g")," ");
 
     // more general or smarter algorithm is too slow
     if(document.URL.indexOf('localhost')!==-1||document.URL.indexOf('127.0.0.1')!==-1){
