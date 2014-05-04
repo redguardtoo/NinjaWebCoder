@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
 // @include     *
-// @version     1.2.4
+// @version     1.2.5
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -33,7 +33,7 @@
   "use strict";
   var nwcoder_triggerKey = 'C-e', //"C" means Ctrl, "M" means Alt.
       // any text in <pre> or text rendered by <div> with class name "syntaxhighlighter"
-      nwcoder_xpathSelector = "//pre|//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]|//dl[contains(concat(' ', @class, ' '), ' codebox ')]|//div[contains(concat(' ', @class, ' '), ' fragment ')]",
+      nwcoder_xpathSelector = "//pre|//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]|//div[contains(concat(' ', @class, ' '), ' codecolorer ')]|//dl[contains(concat(' ', @class, ' '), ' codebox ')]|//div[contains(concat(' ', @class, ' '), ' fragment ')]",
       nwcoder_selectHintMode = false,
       nwcoder_hintElements = {}, // format, { "hotkey": <span> }
       nwcoder_inputKey = '', // what user typed to select hint
