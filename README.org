@@ -1,12 +1,14 @@
-* NinjaWebCoder (version 1.2.5)
+* NinjaWebCoder v1.2.6
 A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It help web developer to copy/paste code snippet from internet (stackoverflow.com, for example).
 
 Features:
 - support the code embedded in <pre> tag
+- support one liner embedded in <p> tag
 - optimized for [[http://stackoverflow.com][stackoverflow]]
 - optimized for [[https://github.com/kpumuk/codecolorer][codecolorer]]
 - optimized for [[http://alexgorbatchev.com/SyntaxHighlighter/][syntaxhighlighter]]
 - optimized for phpBB forum
+- optimized for [[http://github.com][github]]
 
 * Install
 Install it from [[http://userscripts.org/scripts/show/401188][userscript.org]]. It supports both Google Chrome and Mozilla Firefox.
