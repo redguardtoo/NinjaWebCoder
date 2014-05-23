@@ -9,7 +9,12 @@ Features:
 - optimized for [[http://alexgorbatchev.com/SyntaxHighlighter/][syntaxhighlighter]]
 - optimized for phpBB forum
 - optimized for [[http://github.com][github]]
+* Why it's useful?
+Here is the use case, say you are reading some online programming tutorial (For example, [[https://docs.angularjs.org/tutorial/step_00][Angular JS]] tutorial).
 
+You need paste lots of sample code from tutorial into your IDE to finish a chapter.
+
+Then NinjaWebCoder could help you.
 * Install
 Install it from [[http://userscripts.org/scripts/show/401188][userscript.org]]. It supports both Google Chrome and Mozilla Firefox.
 
