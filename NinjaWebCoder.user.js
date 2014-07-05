@@ -42,6 +42,7 @@
       nwcoder_selectHintMode = false,
       nwcoder_hintElements = {}, // format, { "hotkey": <span> }
       nwcoder_inputKey = '', // what user typed to select hint
+      nwcoder_numeric_argument = '', // OPTIONAL numeric argument to specify line number
       nwcoder_hintColorForm = 'yellow',
       nwcoder_hintColorCandidates = 'blue',
       nwcoder_hintColorFocused = 'green',
@@ -514,6 +515,8 @@
     for (i = 0, len = keys.length; i < len; i++) {
       keyMap[keys[i]] = keys[i];
     }
+
+    console.log('keyStr=', keyStr);
 
     if (!keyMap.hasOwnProperty(keyStr)) {
       nwcoder_destruction();
