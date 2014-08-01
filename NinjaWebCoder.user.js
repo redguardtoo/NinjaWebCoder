@@ -309,16 +309,6 @@
         // display:none will goto here on firefox 20+
         continue;
       }
-      //make sure the elem visible
-      // var r = elem.getBoundingClientRect();
-      // if (!r || r.top > window.content.innerHeight ||
-      //     r.bottom < 0 || r.left > window.content.innerWidth ||
-      //     r.right < 0)
-      // {
-
-
-      //   continue;
-      // }
 
       style = nwcoder_getStyle(elem);
       if (!style || style.visibility !== "visible" || style.display === "none") {
