@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        NinjaWebCoder
 // @namespace   NinjaWebCoder
-// @description Pres Ctrl-E to copy code from stackoverflow like a ninja.
+// @description Pres Ctrl-E to copy content from JIRA or stackoverflow.com
 // @include     *
-// @version     1.2.6
+// @version     1.2.7
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -27,7 +27,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 /*global KeyEvent, XPathResult, GM_setClipboard, clearTimeout, AccessifyHTML5, log, nwcoder_onGeneralKeypress, nwcoder_onKeyPressFilterHint */
-/*jslint browser:true, devel:true, indent:2, plusplus:true, continue:true, white:true, newcap:true, regexp:true */
 
 (function () {
   "use strict";
@@ -36,6 +35,9 @@
       nwcoder_xpathSelector = "//pre|"+
         "//*[not((ancestor::pre) or ancestor::dl)]//p/code|"+
         "//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]|"+
+        "//h1[@id='summary-val']|"+ //jira title
+        "//div[contains(concat(' ', @class, ' '), ' user-content-block ')]|"+ //jira descripton
+        "//div[contains(concat(' ', @class, ' '), ' action-body ')]|"+ //jira comment
         "//div[contains(concat(' ', @class, ' '), ' codecolorer ')]|"+
         "//dl[contains(concat(' ', @class, ' '), ' codebox ')]|"+
         "//div[contains(concat(' ', @class, ' '), ' fragment ')]",
@@ -332,6 +334,8 @@
       span.style.left = (elemRect.left > 0 ? elemRect.left + offset[0] : +offset[0]) + 'px';
       span.style.top = (elemRect.top > 0 ? elemRect.top + offset[1] : +offset[1]) + 'px';
       span.style.backgroundColor = nwcoder_hintColorForm;
+      // In JIRA, issue title will over-shadow the hint span
+      span.style.zIndex = '99999';
 
       //link to original element
       span.element = elem;
@@ -633,7 +637,6 @@
 // Local Variables:
 // coding: utf-8
 // indent-tabs-mode: nil
-// mode: js2-mode
 // tab-width: 2
 // js2-basic-offset: 2
 // End:
