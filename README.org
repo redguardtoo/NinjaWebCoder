@@ -24,7 +24,7 @@ Then you run the following command line in terminal to create a new branch name.
 git checkout -b `brname`
 #+END_SRC
 
-"brname" is a bash function defined in your ~/.bashrc. It should be OPTIONAL unless *the issue title is full of funny characters* because the issue is written by the non-technical business analyst.
+"brname" is a bash function defined in your ~/.bashrc. It should be optional unless the issue title is written by the non-technical business analyst and contains funny characters.
 
 The definition of "brname" in OS X:
 #+BEGIN_SRC sh
@@ -42,7 +42,7 @@ function brname () {
 }
 #+END_SRC
 
-So you should be grateful to your CTO. You stand out because he slows down *other* developers.
+So you should be grateful to your CTO. You stand out because he *slows down other developers*.
 ** Use case two
 You are reading some online programming tutorial (For example, [[https://docs.angularjs.org/tutorial/step_00][Angular JS]] tutorial).
 
@@ -50,7 +50,7 @@ You need paste lots of sample code from tutorial into your IDE to finish a chapt
 
 Then NinjaWebCoder could help you.
 * Install
-Install it from [[https://openuserjs.org/scripts/redguardtoo/NinjaWebCoder][openuserjs.org]]. It supports both Google Chrome and Firefox.
+It's at [[https://openuserjs.org/scripts/redguardtoo/NinjaWebCoder][openuserjs.org]]. It supports both Google Chrome and Firefox.
 
 * Set up
 Nothing to set up
