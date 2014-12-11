@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy content from JIRA or stackoverflow.com
 // @include     *
-// @version     1.2.7
+// @version     1.2.8
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -44,9 +44,10 @@
       nwcoder_selectHintMode = false,
       nwcoder_hintElements = {}, // format, { "hotkey": <span> }
       nwcoder_inputKey = '', // what user typed to select hint
-      nwcoder_hintColorForm = 'yellow',
-      nwcoder_hintColorCandidates = 'blue',
-      nwcoder_hintColorFocused = 'green',
+      nwcoder_hintTextColor = 'white',
+      nwcoder_hintColorForm = '#4C70BA', //facebook blue
+      nwcoder_hintColorCandidates = '#209103', //green
+      nwcoder_hintColorFocused = '#FF6852', //red
       nwcoder_lastMatchHint; // the matched hint, the one stand last
 
   function nwcoder_hintKeys() {
@@ -54,7 +55,8 @@
     // 'g' is goto top line
     // 'i' is the insert mode
     // 'h', 'j', 'k', 'l' for vim keybinding
-    return 'asdzxcv';
+    // 's', 'f', 'a' is used by github, @see https://help.github.com/articles/using-keyboard-shortcuts/
+    return 'dzxcv';
   }
 
   function nwcoder_preventEvent(event) {
@@ -323,6 +325,7 @@
 
       span.style.left = (elemRect.left > 0 ? elemRect.left + offset[0] : +offset[0]) + 'px';
       span.style.top = (elemRect.top > 0 ? elemRect.top + offset[1] : +offset[1]) + 'px';
+      span.style.color = nwcoder_hintTextColor;
       span.style.backgroundColor = nwcoder_hintColorForm;
       // In JIRA, issue title will over-shadow the hint span
       span.style.zIndex = '99999';
