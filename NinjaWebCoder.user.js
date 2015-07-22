@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy content from JIRA or stackoverflow.com
 // @include     *
-// @version     1.2.8
+// @version     1.2.9
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -130,6 +130,9 @@
 
     // replace non-break space character whose character code is 160
     clipText=clipText.replace(new RegExp(String.fromCharCode(160),"g")," ");
+
+    // line numbers could be mixed in, remove it, only handle more than 5 lines
+    clipText=clipText.replace(/^(\d+\n){5}(\d+\n)*/,'');
 
     // more general or smarter algorithm is too slow
     if(document.URL.indexOf('localhost')!==-1||document.URL.indexOf('127.0.0.1')!==-1){

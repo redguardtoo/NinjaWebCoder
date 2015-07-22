@@ -1,4 +1,4 @@
-* NinjaWebCoder v1.2.8
+* NinjaWebCoder v1.2.9
 A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It's designed for the top tier developers. It helps the keyboard ninja work around those crap enterprise web applications by extracting text content using keyboard ONLY.
 
 The key idea is borrowed from those hardcore Emacs geeks.
