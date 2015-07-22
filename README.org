@@ -1,21 +1,29 @@
 * NinjaWebCoder v1.2.9
-A user script for [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]]. It's designed for the top tier developers. It helps the keyboard ninja work around those crap enterprise web applications by extracting text content using keyboard ONLY.
-
-The key idea is borrowed from those hardcore Emacs geeks.
+A [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]] user script.  Use keyboard to copy code snippet from web page.
 
 Features:
-- supports [[https://www.atlassian.com/software/jira][JIRA]]
-- supports [[http://stackoverflow.com][stackoverflow]]
-- supports [[https://github.com/kpumuk/codecolorer][codecolorer]]
-- supports [[http://alexgorbatchev.com/SyntaxHighlighter/][syntaxhighlighter]]
-- supports phpBB forum
-- supports [[http://github.com][github]]
-- supports the code embedded in <pre> tag
-- supports one liner embedded in <p> tag
+- Supports [[https://www.atlassian.com/software/jira][JIRA]]
+- Supports [[http://stackoverflow.com][stackoverflow]]
+- Supports [[https://github.com/kpumuk/codecolorer][codecolorer]]
+- Supports [[http://alexgorbatchev.com/SyntaxHighlighter/][syntaxhighlighter]]
+- Supports phpBB forum
+- Supports [[http://github.com][github]]
+- Supports the code embedded in <pre> tag
+- Supports one liner embedded in <p> tag
+- Line numbers will be stripped automatically
+- Works on Chrome and Firefox
 
-* Why NinjaWebCoder?
+* Why
 ** Use case one
-The new CTO in your company want to *re-invent the workflow*. You are required to create git feature branch with "meaningful" branch name. Using simple issue number like "DD-106" is forbidden from now on.
+You are reading some online programming tutorial (For example, [[https://docs.angularjs.org/tutorial/step_00][Angular JS]] tutorial).
+
+You need paste lots of sample code from tutorial into your IDE to finish a chapter.
+
+By using NinjaWebCoder, 
+- you only press one key to copy the code into clipboard
+- the copied code is formatted so it can be used directly in IDE
+** Use case two
+The new CTO in your company want to *re-invent the workflow*. You are required to create git feature branch with "meaningful" branch name. Issue number like "DD-106" is forbidden for branch name from now on.
 
 So you install the NinjaWebCoder. Press Ctrl-E to copy the issue title from the bug tracker.
 
@@ -42,15 +50,9 @@ function brname () {
 }
 #+END_SRC
 
-So you should be grateful to your CTO. You stand out because he *slows down other developers*.
-** Use case two
-You are reading some online programming tutorial (For example, [[https://docs.angularjs.org/tutorial/step_00][Angular JS]] tutorial).
-
-You need paste lots of sample code from tutorial into your IDE to finish a chapter.
-
-Then NinjaWebCoder could help you.
 * Install
-It's at [[https://openuserjs.org/scripts/redguardtoo/NinjaWebCoder][openuserjs.org]]. It supports both Google Chrome and Firefox.
+- Install [[https://addons.mozilla.org/en-us/firefox/addon/greasemonkey/][Greasemonkey]]
+- Go to [[https://openuserjs.org/scripts/redguardtoo/NinjaWebCoder][openuserjs.org]], click "Install" button
 
 * Set up
 Nothing to set up
@@ -60,19 +62,18 @@ Press Ctrl-E.
 
 Then text content embedded in the html page will be highlighted by some visual hint.
 
-Press the keyboard according to the hint. The content is into the clipboard.
+Press the keyboard by the hints. The content you finally selected will be copied into the clipboard.
 
 * Demo
-As you can see, after pressing "Ctrl-E", a yellow background hint with text "a" appears at the left top corner of the code snippet.
+After "Ctrl-E", a yellow hint "a" appears at the left top corner of the code snippet.
 
-I follow the hint and press "a", the snippet is copied into clipboard.
+I follow it and press "a", the snippet is copied into clipboard.
 
 [[https://raw.github.com/redguardtoo/NinjaWebCoder/master/ninja-web-coder-demo.gif]]
 
 * Contact me
-You can report bugs at [[https://github.com/redguardtoo/NinjaWebCoder]].
+Report bugs at [[https://github.com/redguardtoo/NinjaWebCoder]].
 
 * Credits
-Most hint related code is borrowed from [[https://github.com/mooz][Masafumi Oyamada (aka mooz)]]. His project [[https://github.com/mooz/keysnail][keysnail]] (a Emacs simluation in firefox) inspired me.
-
-Victor van den Elzen designed the algorithm to produce the text hints.
+- Hint related code is borrowed from [[https://github.com/mooz][Masafumi Oyamada (aka mooz)]]
+- Victor van den Elzen designed the algorithm to produce the hints
