@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy content from JIRA or stackoverflow.com
 // @include     *
-// @version     1.2.9
+// @version     1.2.10
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -36,6 +36,8 @@
         "//*[not((ancestor::pre) or ancestor::dl)]//p/code|"+
         "//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]|"+
         "//h1[@id='summary-val']|"+ //jira title
+        "//h1[@id='title-text']|"+ //confluence wiki title
+        "//span[contains(concat(' ', @class, ' '), ' plugin_pagetree_children_span ')]|"+ //confluence child node on sidebar
         "//div[contains(concat(' ', @class, ' '), ' user-content-block ')]|"+ //jira descripton
         "//div[contains(concat(' ', @class, ' '), ' action-body ')]|"+ //jira comment
         "//div[contains(concat(' ', @class, ' '), ' codecolorer ')]|"+
@@ -127,6 +129,9 @@
     } else {
       clipText=elem.textContent;
     }
+
+    // strip space/tab/CR/LF
+    clipText=clipText.replace(/^[\r\n\s]+|[\r\n\s]+$/g, '');
 
     // replace non-break space character whose character code is 160
     clipText=clipText.replace(new RegExp(String.fromCharCode(160),"g")," ");

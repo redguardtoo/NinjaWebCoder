@@ -1,8 +1,9 @@
-* NinjaWebCoder v1.2.9
+* NinjaWebCoder v1.2.10
 A [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]] user script.  Use keyboard to copy code snippet from web page.
 
 Features:
 - Supports [[https://www.atlassian.com/software/jira][JIRA]]
+- Supports [[https://www.atlassian.com/software/confluence][Confluence Wiki]]
 - Supports [[http://stackoverflow.com][stackoverflow]]
 - Supports [[https://github.com/kpumuk/codecolorer][codecolorer]]
 - Supports [[http://alexgorbatchev.com/SyntaxHighlighter/][syntaxhighlighter]]
