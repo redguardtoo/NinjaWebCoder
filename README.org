@@ -1,4 +1,4 @@
-* NinjaWebCoder v1.2.10
+* NinjaWebCoder v1.2.11
 A [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]] user script.  Use keyboard to copy code snippet from web page.
 
 Features:

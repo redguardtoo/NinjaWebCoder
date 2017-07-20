@@ -3,7 +3,7 @@
 // @namespace   NinjaWebCoder
 // @description Pres Ctrl-E to copy content from JIRA or stackoverflow.com
 // @include     *
-// @version     1.2.10
+// @version     1.2.11
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -33,7 +33,7 @@
   var nwcoder_triggerKey = 'C-e', //"C" means Ctrl, "M" means Alt.
       // any text in <pre> or text rendered by <div> with class name "syntaxhighlighter"
       nwcoder_xpathSelector = "//pre|"+
-        "//*[not((ancestor::pre) or ancestor::dl)]//p/code|"+
+        "//code[not((ancestor::pre) or (ancestor::dl) or (ancestor::div[contains(concat(' ', @class, ' '), ' line ')]))]|"+ // workaround wordpress and confluence wiki
         "//div[contains(concat(' ', @class, ' '), ' syntaxhighlighter ')]|"+
         "//h1[@id='summary-val']|"+ //jira title
         "//h1[@id='title-text']|"+ //confluence wiki title
