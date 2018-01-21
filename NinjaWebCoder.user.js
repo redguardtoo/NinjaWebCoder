@@ -1,9 +1,12 @@
 // ==UserScript==
 // @name        NinjaWebCoder
 // @namespace   NinjaWebCoder
-// @description Pres Ctrl-E to copy content from JIRA or stackoverflow.com
+// @description Press Ctrl-E/Q/Z to copy code into clipboard
 // @include     *
-// @version     1.2.11
+// @author      Chen Bin
+// @version     1.2.12
+// @license     MIT
+// @run-at      document-end
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -30,7 +33,7 @@
 
 (function () {
   "use strict";
-  var nwcoder_triggerKey = 'C-e', //"C" means Ctrl, "M" means Alt.
+  var nwcoder_triggerKey = ['C-e', 'C-q', 'C-z'], //"C" means Ctrl, "M" means Alt.
       // any text in <pre> or text rendered by <div> with class name "syntaxhighlighter"
       nwcoder_xpathSelector = "//pre|"+
         "//code[not((ancestor::pre) or (ancestor::dl) or (ancestor::div[contains(concat(' ', @class, ' '), ' line ')]))]|"+ // workaround wordpress and confluence wiki
@@ -163,11 +166,15 @@
     return null;
   }
 
+  function win() {
+    return window.content || window;
+  }
+
   function nwcoder_getStyle(elem) {
-    var style, win = window.content;
-    if (win.getComputedStyle) {
+    var style; // chrome and firefox
+    if (win().getComputedStyle) {
       //getComputedStyle is supported in ie9
-      style = win.getComputedStyle(elem, null);
+      style = win().getComputedStyle(elem, null);
     } else {
       style = elem.currentStyle;
     }
@@ -177,7 +184,7 @@
   function nwcoder_getBodyOffsets() {
     // http://d.hatena.ne.jp/edvakf/20100830/1283199419
     var rect,
-        style = window.content.getComputedStyle(document.body,null),
+        style = win().getComputedStyle(document.body,null),
         x,
         y;
 
@@ -361,110 +368,29 @@
   }
 
   function nwcoder_keyEventToString(aEvent) {
-    var keyStr,
-        isDisplayableKey = function (aEvent) {
-          return aEvent.charCode >= 0x20 && aEvent.charCode <= 0x7e;
-        },
-        isControlKey = function (aEvent) {
-          return aEvent.ctrlKey || aEvent.commandKey;
-        },
-        isMetaKey = function (aEvent) {
-          return aEvent.altKey || aEvent.metaKey;
-        };
-
-    if (isDisplayableKey(aEvent)) {
-      // ASCII displayable characters (0x20 : SPC)
-      keyStr = String.fromCharCode(aEvent.charCode);
-      if (aEvent.charCode === 0x20) {
-        keyStr = "SPC";
-      }
-    } else if (aEvent.keyCode >= KeyEvent.DOM_VK_F1 &&
-               aEvent.keyCode <= KeyEvent.DOM_VK_F24) {
-      // function keys
-      keyStr = "<f" + (aEvent.keyCode - KeyEvent.DOM_VK_F1 + 1) + ">";
+    // we have to use a simplified version to workaround issues on Chrome, for example, `KeyEvent` does NOT exist in Chrome
+    var keyPrefix = '';
+    var keyChar = '';
+    var isControlKey = function (aEvent) {
+      return aEvent.ctrlKey || aEvent.commandKey;
+    };
+    var isMetaKey = function (aEvent) {
+      return aEvent.altKey || aEvent.metaKey;
+    };
+    // only consider Control key
+    if(isControlKey(aEvent)) {
+      keyPrefix = 'C-';
+    }
+    if(isMetaKey(aEvent)) {
+      keyPrefix = 'M-';
+    }
+    if(aEvent.code) {
+      // don't know why but Chrome may return wrong charCode. Maybe it's because some 3rd party plugin?
+      keyChar = aEvent.code.replace('Key', '').toLowerCase();
     } else {
-      // special charactors
-      switch (aEvent.keyCode) {
-      case KeyEvent.DOM_VK_ESCAPE:
-        keyStr = "ESC";
-        break;
-      case KeyEvent.DOM_VK_RETURN:
-      case KeyEvent.DOM_VK_ENTER:
-        keyStr = "RET";
-        break;
-      case KeyEvent.DOM_VK_RIGHT:
-        keyStr = "<right>";
-        break;
-      case KeyEvent.DOM_VK_LEFT:
-        keyStr = "<left>";
-        break;
-      case KeyEvent.DOM_VK_UP:
-        keyStr = "<up>";
-        break;
-      case KeyEvent.DOM_VK_DOWN:
-        keyStr = "<down>";
-        break;
-      case KeyEvent.DOM_VK_PAGE_UP:
-        keyStr = "<prior>";
-        break;
-      case KeyEvent.DOM_VK_PAGE_DOWN:
-        keyStr = "<next>";
-        break;
-      case KeyEvent.DOM_VK_END:
-        keyStr = "<end>";
-        break;
-      case KeyEvent.DOM_VK_HOME:
-        keyStr = "<home>";
-        break;
-      case KeyEvent.DOM_VK_TAB:
-        keyStr = "<tab>";
-        break;
-      case KeyEvent.DOM_VK_BACK_SPACE:
-        keyStr = "<backspace>";
-        break;
-      case KeyEvent.DOM_VK_PRINTSCREEN:
-        keyStr = "<print>";
-        break;
-      case KeyEvent.DOM_VK_INSERT:
-        keyStr = "<insert>";
-        break;
-      case KeyEvent.DOM_VK_PAUSE:
-        keyStr = "<pause>";
-        break;
-      case KeyEvent.DOM_VK_DELETE:
-        keyStr = "<delete>";
-        break;
-      case 0xE2:
-        /**
-         * windows specific bug
-         * When Ctrl + _ is pressed, the char code becomes 0, not the 95
-         * and the key code becomes 242 (0xE2)
-         */
-        if (aEvent.ctrlKey) {
-          keyStr = "_";
-        }
-        break;
-      default:
-        break;
-      }
+      keyChar = String.fromCharCode(aEvent.charCode);
     }
-
-    if (!keyStr) {
-      return null;
-    }
-
-    // append modifier
-    if (isMetaKey(aEvent)) {
-      keyStr = "M-" + keyStr;
-    }
-    if (isControlKey(aEvent)) {
-      keyStr = "C-" + keyStr;
-    }
-    if (aEvent.shiftKey && (!isDisplayableKey(aEvent) || aEvent.charCode === 0x20)) {
-      keyStr = "S-" + keyStr;
-    }
-
-    return keyStr;
+    return keyPrefix + keyChar;
   }
 
   function nwcoder_resetHintsColor() {
@@ -609,10 +535,18 @@
     return;
   }
 
+  function nwcoder_str_in(s, arr) {
+    for (var i = 0; i < arr.length; i++) {
+      if(s.toLowerCase() === arr[i].toLowerCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
   function nwcoder_onGeneralKeypress(evt) {
     var keyStr = nwcoder_keyEventToString(evt);
 
-    if (keyStr === nwcoder_triggerKey && nwcoder_selectHintMode === false) {
+    if (nwcoder_str_in(keyStr, nwcoder_triggerKey) && nwcoder_selectHintMode === false) {
       nwcoder_start();
       nwcoder_preventEvent(evt);
       return false;

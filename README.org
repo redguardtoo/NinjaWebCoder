@@ -1,4 +1,4 @@
-* NinjaWebCoder v1.2.11
+* NinjaWebCoder v1.2.12
 A [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]] user script.  Use keyboard to copy code snippet from web page.
 
 Features:
@@ -12,64 +12,23 @@ Features:
 - Supports the code embedded in <pre> tag
 - Supports one liner embedded in <p> tag
 - Line numbers will be stripped automatically
-- Works on Chrome and Firefox
-
-* Why
-** Use case one
-You are reading some online programming tutorial (For example, [[https://docs.angularjs.org/tutorial/step_00][Angular JS]] tutorial).
-
-You need paste lots of sample code from tutorial into your IDE to finish a chapter.
-
-By using NinjaWebCoder, 
-- you only press one key to copy the code into clipboard
-- the copied code is formatted so it can be used directly in IDE
-** Use case two
-The new CTO in your company want to *re-invent the workflow*. You are required to create git feature branch with "meaningful" branch name. Issue number like "DD-106" is forbidden for branch name from now on.
-
-So you install the NinjaWebCoder. Press Ctrl-E to copy the issue title from the bug tracker.
-
-Then you run the following command line in terminal to create a new branch name.
-#+BEGIN_SRC sh
-git checkout -b `brname`
-#+END_SRC
-
-"brname" is a bash function defined in your ~/.bashrc. It should be optional unless the issue title is written by the non-technical business analyst and contains funny characters.
-
-The definition of "brname" in OS X:
-#+BEGIN_SRC sh
-function brname () {
-    local str=`getclip | sed -e 's/^ \+//g' -e 's/ \+$//g' -e 's/[" -#\(]\+/_/g' -e "s/'//g" -e 's/\(.*\)/\L\1/'`
-    echo $str
-}
-#+END_SRC
-
-The definition of "brname" in Linux:
-#+BEGIN_SRC sh
-function brname () {
-    local str=`xclip -o| sed -e 's/^ \+//g' -e 's/ \+$//g' -e 's/[" -#\(]\+/_/g' -e "s/'//g" -e 's/\(.*\)/\L\1/'`
-    echo $str
-}
-#+END_SRC
+- Tested on latest Firefox and Chrome
 
 * Install
-- Install [[https://addons.mozilla.org/en-us/firefox/addon/greasemonkey/][Greasemonkey]]
+- Install [[https://addons.mozilla.org/en-us/firefox/addon/greasemonkey/][Greasemonkey]] Firefox or [[https://tampermonkey.net/][Tampermonkey]] on Chrome
 - Go to [[https://openuserjs.org/scripts/redguardtoo/NinjaWebCoder][openuserjs.org]], click "Install" button
 
 * Set up
 Nothing to set up
 
 * Usage
-Press Ctrl-E.
+Press =Ctrl-E= or =Ctrl-Q= or =Ctrl-Z=.
 
 Then text content embedded in the html page will be highlighted by some visual hint.
 
 Press the keyboard by the hints. The content you finally selected will be copied into the clipboard.
 
 * Demo
-After "Ctrl-E", a yellow hint "a" appears at the left top corner of the code snippet.
-
-I follow it and press "a", the snippet is copied into clipboard.
-
 [[https://raw.github.com/redguardtoo/NinjaWebCoder/master/ninja-web-coder-demo.gif]]
 
 * Contact me
