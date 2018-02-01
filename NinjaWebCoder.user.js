@@ -10,7 +10,7 @@
 // @grant       GM_setClipboard
 // ==/UserScript==
 
-// NinjaWebCoder.js --- manipulate code from internet like a ninja
+// NinjaWebCoder.js --- copy code from webiste into clipboard by pressing C-E/Q/Z
 
 // Copyright (C) 2014 Chen Bin <chenbin.sh@gmail.com>
 

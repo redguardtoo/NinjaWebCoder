@@ -1,5 +1,5 @@
 * NinjaWebCoder v1.2.12
-A [[https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/][GreaseMonkey]] user script.  Use keyboard to copy code snippet from web page.
+Use keyboard to copy code snippet from web page.
 
 Features:
 - Supports [[https://www.atlassian.com/software/jira][JIRA]]
@@ -13,21 +13,17 @@ Features:
 - Supports one liner embedded in <p> tag
 - Line numbers will be stripped automatically
 - Tested on latest Firefox and Chrome
-
 * Install
-- Install [[https://addons.mozilla.org/en-us/firefox/addon/greasemonkey/][Greasemonkey]] Firefox or [[https://tampermonkey.net/][Tampermonkey]] on Chrome
+- Install [[https://addons.mozilla.org/en-us/firefox/addon/greasemonkey/][Greasemonkey]] on Firefox or [[https://tampermonkey.net/][Tampermonkey]] on Chrome
 - Go to [[https://openuserjs.org/scripts/redguardtoo/NinjaWebCoder][openuserjs.org]], click "Install" button
-
 * Set up
 Nothing to set up
-
 * Usage
 Press =Ctrl-E= or =Ctrl-Q= or =Ctrl-Z=.
 
 Then text content embedded in the html page will be highlighted by some visual hint.
 
-Press the keyboard by the hints. The content you finally selected will be copied into the clipboard.
-
+Follow hints and press keys. The content you finally selected will be copied into the clipboard.
 * Demo
 [[https://raw.github.com/redguardtoo/NinjaWebCoder/master/ninja-web-coder-demo.gif]]
 
@@ -36,4 +32,4 @@ Report bugs at [[https://github.com/redguardtoo/NinjaWebCoder]].
 
 * Credits
 - Hint related code is borrowed from [[https://github.com/mooz][Masafumi Oyamada (aka mooz)]]
-- Victor van den Elzen designed the algorithm to produce the hints
+- Victor van den Elzen designed the hints rendering algorithm
