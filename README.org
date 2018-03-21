@@ -1,4 +1,4 @@
-* NinjaWebCoder v1.2.12
+* NinjaWebCoder v1.2.13
 Use keyboard to copy code snippet from web page.
 
 Features:

@@ -4,7 +4,7 @@
 // @description Press Ctrl-E/Q/Z to copy code into clipboard
 // @include     *
 // @author      Chen Bin
-// @version     1.2.12
+// @version     1.2.13
 // @license     MIT
 // @run-at      document-end
 // @grant       GM_setClipboard
@@ -43,6 +43,7 @@
         "//span[contains(concat(' ', @class, ' '), ' plugin_pagetree_children_span ')]|"+ //confluence child node on sidebar
         "//div[contains(concat(' ', @class, ' '), ' user-content-block ')]|"+ //jira descripton
         "//div[contains(concat(' ', @class, ' '), ' action-body ')]|"+ //jira comment
+        "//div[contains(concat(' ', @class, ' '), ' ghx-summary ')]|"+ //jira item title in board
         "//div[contains(concat(' ', @class, ' '), ' codecolorer ')]|"+
         "//dl[contains(concat(' ', @class, ' '), ' codebox ')]|"+
         "//div[contains(concat(' ', @class, ' '), ' fragment ')]",
