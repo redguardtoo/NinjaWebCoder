@@ -4,7 +4,7 @@
 // @description Press Ctrl-E/Q/Z to copy code into clipboard
 // @include     *
 // @author      Chen Bin
-// @version     1.2.13
+// @version     1.2.14
 // @license     MIT
 // @run-at      document-end
 // @grant       GM_setClipboard
@@ -46,6 +46,7 @@
         "//div[contains(concat(' ', @class, ' '), ' ghx-summary ')]|"+ //jira item title in board
         "//div[contains(concat(' ', @class, ' '), ' codecolorer ')]|"+
         "//dl[contains(concat(' ', @class, ' '), ' codebox ')]|"+
+        "//div[contains(concat(' ', @class, ' '), ' CodeMirror ')]|"+ //Slack
         "//div[contains(concat(' ', @class, ' '), ' fragment ')]",
       nwcoder_selectHintMode = false,
       nwcoder_hintElements = {}, // format, { "hotkey": <span> }

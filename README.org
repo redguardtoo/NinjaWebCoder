@@ -1,5 +1,5 @@
-* NinjaWebCoder v1.2.13
-Use keyboard to copy code snippet from web page.
+* NinjaWebCoder v1.2.14
+Use keyboard to extract code snippet from web page.
 
 Features:
 - Supports [[https://www.atlassian.com/software/jira][JIRA]]
@@ -9,7 +9,8 @@ Features:
 - Supports [[http://alexgorbatchev.com/SyntaxHighlighter/][syntaxhighlighter]]
 - Supports phpBB forum
 - Supports [[http://github.com][github]]
-- Supports the code embedded in <pre> tag
+- Supports [[http://slack.com][Slack]]
+- Supports code embedded in <pre> tag
 - Supports one liner embedded in <p> tag
 - Line numbers will be stripped automatically
 - Tested on latest Firefox and Chrome
